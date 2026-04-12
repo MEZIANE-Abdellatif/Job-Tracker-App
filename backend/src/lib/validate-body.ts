@@ -35,3 +35,20 @@ export async function validateBody<T extends object>(
   }
   return instance;
 }
+
+export async function validateQuery<T extends object>(
+  DtoClass: DtoClass<T>,
+  queryPayload: unknown,
+): Promise<T> {
+  const instance = plainToInstance(DtoClass as ClassConstructor<T>, queryPayload as object);
+  const errors = await validate(instance, {
+    whitelist: true,
+    forbidNonWhitelisted: true,
+  });
+  if (errors.length > 0) {
+    const messages = collectMessages(errors);
+    const message = messages[0] ?? "Validation failed";
+    throw new HttpError(400, message);
+  }
+  return instance;
+}

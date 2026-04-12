@@ -2,6 +2,7 @@ import cookieParser from "cookie-parser";
 import express from "express";
 
 import { errorHandler } from "./middleware/error-handler";
+import { applicationsRouter } from "./modules/applications/applications.router";
 import { authRouter } from "./modules/auth/auth.router";
 import { prisma } from "./prisma/client";
 
@@ -22,6 +23,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/applications", applicationsRouter);
 
 app.use(errorHandler);
 

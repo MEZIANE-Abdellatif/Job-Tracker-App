@@ -2,6 +2,10 @@
 node_modules/
 dist/
 coverage/
+.next/
+
+# Next.js local env (copy from .env.local.example)
+frontend/.env*.local
 
 # Local-only specs 
 ARCH.md

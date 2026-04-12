@@ -5,4 +5,5 @@ module.exports = {
   roots: ["<rootDir>/tests"],
   testMatch: ["**/*.test.ts"],
   clearMocks: true,
+  setupFiles: ["<rootDir>/tests/jest.setup.ts"],
 };

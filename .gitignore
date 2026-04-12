@@ -1,19 +1,15 @@
-# Cursor — rules & local AI config
-.cursor/
-
-# Legacy single-file Cursor rules (repo root)
-.cursorrules
-
-# Local-only specs (not pushed)
-ARCH.md
-SECURITY.md
-
 # Dependencies & build output (any subfolder)
 node_modules/
 dist/
 coverage/
 
+# Local-only specs 
+ARCH.md
+SECURITY.md
+
 # Environment & OS noise
 .env
 *.log
 .DS_Store
+.cursor/
+.cursorrules

@@ -6,6 +6,8 @@ import Link from "next/link";
 import { apiFetch } from "@/lib/api";
 import type { ApiErrorBody, Application, ApplicationStatus } from "@/types";
 
+import { JobBoardLinks } from "@/components/job-boards/JobBoardLinks";
+
 import { ApplicationCard } from "./ApplicationCard";
 
 const STATUSES: ApplicationStatus[] = [
@@ -121,6 +123,43 @@ const filterActive =
 const filterIdle =
   "border-sky-200/70 bg-white/55 text-slate-700 hover:border-sky-300 hover:bg-white/80";
 
+const addApplicationCtaClassName =
+  "inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-gradient-to-r from-[#2196F3] to-[#5BB8F5] px-5 text-sm font-semibold text-white shadow-lg shadow-sky-500/25 transition-[transform,box-shadow] hover:from-[#1b87e0] hover:to-[#4aadf0] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 sm:w-auto";
+
+const dashboardJobBoardsClassName =
+  "mb-6 border-b border-sky-200/45 pb-6 motion-safe:scroll-smooth";
+
+type ApplicationFilterBarProps = {
+  activeFilter: FilterValue;
+  onFilterChange: (value: FilterValue) => void;
+};
+
+function ApplicationFilterBar({
+  activeFilter,
+  onFilterChange,
+}: ApplicationFilterBarProps) {
+  return (
+    <div className="mb-6 overflow-x-auto pb-1">
+      <div className="flex min-w-max items-center gap-2">
+        {FILTERS.map((filter) => {
+          const active = filter.value === activeFilter;
+          return (
+            <button
+              key={filter.value}
+              type="button"
+              onClick={() => onFilterChange(filter.value)}
+              aria-pressed={active}
+              className={`inline-flex min-h-11 items-center justify-center rounded-xl border px-4 text-xs font-semibold uppercase tracking-wider transition-[transform,box-shadow,background-color,color,border-color] duration-200 ease-out active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 ${active ? filterActive : filterIdle}`}
+            >
+              {filter.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function ApplicationsList() {
   const [items, setItems] = useState<Application[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -165,6 +204,10 @@ export function ApplicationsList() {
         aria-busy="true"
         aria-label="Applications loading"
       >
+        <JobBoardLinks
+          variant="scroll"
+          className={dashboardJobBoardsClassName}
+        />
         <div className="mb-6 flex items-center gap-2">
           <div
             className="h-4 w-4 animate-spin rounded-full border-2 border-sky-200 border-t-sky-500"
@@ -184,6 +227,10 @@ export function ApplicationsList() {
         className="w-full rounded-2xl border border-rose-300/60 bg-rose-50/80 p-5"
         aria-label="Applications error"
       >
+        <JobBoardLinks
+          variant="scroll"
+          className="mb-6 border-b border-rose-200/50 pb-6 motion-safe:scroll-smooth"
+        />
         <p className="text-sm text-rose-900">{error}</p>
         <button
           type="button"
@@ -202,24 +249,14 @@ export function ApplicationsList() {
         className="w-full"
         aria-label="No applications"
       >
-        <div className="mb-6 overflow-x-auto pb-1">
-          <div className="flex min-w-max items-center gap-2">
-            {FILTERS.map((filter) => {
-              const active = filter.value === activeFilter;
-              return (
-                <button
-                  key={filter.value}
-                  type="button"
-                  onClick={() => setActiveFilter(filter.value)}
-                  aria-pressed={active}
-                  className={`inline-flex min-h-11 items-center justify-center rounded-xl border px-4 text-xs font-semibold uppercase tracking-wider transition-[transform,box-shadow,background-color,color,border-color] duration-200 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 ${active ? filterActive : filterIdle}`}
-                >
-                  {filter.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <JobBoardLinks
+          variant="scroll"
+          className={dashboardJobBoardsClassName}
+        />
+        <ApplicationFilterBar
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+        />
         <div className="relative overflow-hidden rounded-2xl border border-dashed border-sky-300/70 bg-gradient-to-br from-white/80 via-sky-50/60 to-[#5BB8F5]/10 px-6 py-14 text-center shadow-inner sm:px-10 sm:py-16">
           <div
             className="pointer-events-none absolute left-1/2 top-0 h-36 w-36 -translate-x-1/2 rounded-full bg-[#5BB8F5]/20 blur-3xl"
@@ -236,6 +273,12 @@ export function ApplicationsList() {
               ? "When you add roles you're pursuing, they'll show up here with status, dates, and quick links—ready to scan at a glance."
               : `No ${activeFilter.toLowerCase()} applications yet. Try another filter or create a new role.`}
           </p>
+          <Link
+            href="/dashboard/applications/new"
+            className={`relative mt-8 ${addApplicationCtaClassName}`}
+          >
+            Add new application
+          </Link>
         </div>
       </section>
     );
@@ -247,26 +290,16 @@ export function ApplicationsList() {
 
   return (
     <section className="w-full" aria-label="Your applications">
-      <div className="mb-6 overflow-x-auto pb-1">
-        <div className="flex min-w-max items-center gap-2">
-          {FILTERS.map((filter) => {
-            const active = filter.value === activeFilter;
-            return (
-              <button
-                key={filter.value}
-                type="button"
-                onClick={() => setActiveFilter(filter.value)}
-                aria-pressed={active}
-                className={`inline-flex min-h-11 items-center justify-center rounded-xl border px-4 text-xs font-semibold uppercase tracking-wider transition-[transform,box-shadow,background-color,color,border-color] duration-200 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 ${active ? filterActive : filterIdle}`}
-              >
-                {filter.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <JobBoardLinks
+        variant="scroll"
+        className={dashboardJobBoardsClassName}
+      />
+      <ApplicationFilterBar
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
+      />
 
-      <div className="mb-6 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-sm font-medium uppercase tracking-[0.18em] text-slate-500">
             Applications
@@ -276,22 +309,24 @@ export function ApplicationsList() {
             {items.length === 1 ? "role" : "roles"}
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <Link
-            href="/dashboard/applications/new"
-            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-sky-300/80 bg-sky-50/90 px-4 text-xs font-semibold uppercase tracking-wider text-sky-900 transition-colors hover:bg-sky-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
-          >
-            New
-          </Link>
-          <button
-            type="button"
-            onClick={() => void load()}
-            className="self-start text-xs font-medium text-sky-700 underline-offset-4 transition-colors hover:text-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 sm:self-auto"
-          >
-            Refresh
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => void load()}
+          className="self-start text-xs font-medium text-sky-700 underline-offset-4 transition-colors hover:text-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 sm:self-auto"
+        >
+          Refresh
+        </button>
       </div>
+
+      <div className="sticky top-0 z-10 mb-4 py-2">
+        <Link
+          href="/dashboard/applications/new"
+          className={addApplicationCtaClassName}
+        >
+          Add new application
+        </Link>
+      </div>
+
       <ul className="flex list-none flex-col gap-4 p-0" role="list">
         {items.map((app) => (
           <li key={app.id} role="listitem">

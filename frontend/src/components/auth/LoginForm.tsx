@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, type FormEvent } from "react";
 
+import { AuthBackToHomeLink } from "@/components/auth/AuthBackToHomeLink";
 import { setAccessToken } from "@/lib/access-token";
 import {
   readApiErrorMessage,
@@ -74,6 +75,7 @@ export function LoginForm() {
   return (
     <div className="relative min-h-full flex-1 overflow-x-hidden bg-transparent text-slate-800">
       <div className="relative z-10 mx-auto flex min-h-full max-w-lg flex-col justify-center px-4 py-10 sm:px-6 sm:py-16">
+        <AuthBackToHomeLink />
         <div className="mb-8 text-center sm:mb-10">
           <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-sky-600">
             Job tracker

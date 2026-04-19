@@ -60,39 +60,26 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="relative min-h-full flex-1 overflow-hidden bg-slate-950 text-slate-100">
-      <div
-        className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-violet-600/30 blur-[100px]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-cyan-500/20 blur-[90px]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute left-1/2 top-1/3 h-64 w-64 -translate-x-1/2 rounded-full bg-fuchsia-600/15 blur-[80px]"
-        aria-hidden
-      />
-
+    <div className="relative min-h-full flex-1 overflow-x-hidden bg-transparent text-slate-800">
       <div className="relative z-10 mx-auto flex min-h-full max-w-lg flex-col justify-center px-4 py-10 sm:px-6 sm:py-16">
         <div className="mb-8 text-center sm:mb-10">
-          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-violet-300/90">
+          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-sky-600">
             Job tracker
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
             Create your account
           </h1>
-          <p className="mt-3 text-sm leading-relaxed text-slate-400 sm:text-base">
+          <p className="mt-3 text-sm leading-relaxed text-slate-600 sm:text-base">
             Start organizing applications with a calm, focused workspace.
           </p>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-6 shadow-[0_24px_80px_-12px_rgba(0,0,0,0.45)] backdrop-blur-xl sm:p-8">
+        <div className="rounded-2xl border border-sky-200/70 bg-white/75 p-6 shadow-[0_16px_56px_-14px_rgba(33,150,243,0.18)] backdrop-blur-xl sm:p-8">
           <form className="space-y-6" onSubmit={handleSubmit} noValidate>
             {formError ? (
               <div
                 role="alert"
-                className="rounded-xl border border-red-500/30 bg-red-950/40 px-4 py-3 text-sm text-red-200"
+                className="rounded-xl border border-rose-300/60 bg-rose-50/90 px-4 py-3 text-sm text-rose-900"
               >
                 {formError}
               </div>
@@ -101,7 +88,7 @@ export function RegisterForm() {
             <div className="space-y-2">
               <label
                 htmlFor="register-email"
-                className="block text-sm font-medium text-slate-200"
+                className="block text-sm font-medium text-slate-800"
               >
                 Email
               </label>
@@ -120,13 +107,13 @@ export function RegisterForm() {
                 aria-describedby={
                   emailError ? "register-email-error" : undefined
                 }
-                className="min-h-11 w-full rounded-xl border border-slate-600/80 bg-slate-950/50 px-4 py-3 text-base text-white outline-none transition-[border-color,box-shadow] placeholder:text-slate-500 focus:border-violet-500/70 focus:ring-2 focus:ring-violet-500/35"
+                className="min-h-11 w-full rounded-xl border border-sky-200/90 bg-white/85 px-4 py-3 text-base text-slate-900 outline-none transition-[border-color,box-shadow] placeholder:text-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-300/45"
                 placeholder="you@example.com"
               />
               {emailError ? (
                 <p
                   id="register-email-error"
-                  className="text-sm text-red-300"
+                  className="text-sm text-rose-700"
                   role="status"
                 >
                   {emailError}
@@ -137,7 +124,7 @@ export function RegisterForm() {
             <div className="space-y-2">
               <label
                 htmlFor="register-password"
-                className="block text-sm font-medium text-slate-200"
+                className="block text-sm font-medium text-slate-800"
               >
                 Password
               </label>
@@ -157,13 +144,13 @@ export function RegisterForm() {
                 aria-describedby={
                   passwordError ? "register-password-error" : undefined
                 }
-                className="min-h-11 w-full rounded-xl border border-slate-600/80 bg-slate-950/50 px-4 py-3 text-base text-white outline-none transition-[border-color,box-shadow] placeholder:text-slate-500 focus:border-violet-500/70 focus:ring-2 focus:ring-violet-500/35"
+                className="min-h-11 w-full rounded-xl border border-sky-200/90 bg-white/85 px-4 py-3 text-base text-slate-900 outline-none transition-[border-color,box-shadow] placeholder:text-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-300/45"
                 placeholder="At least 8 characters"
               />
               {passwordError ? (
                 <p
                   id="register-password-error"
-                  className="text-sm text-red-300"
+                  className="text-sm text-rose-700"
                   role="status"
                 >
                   {passwordError}
@@ -174,12 +161,12 @@ export function RegisterForm() {
             <button
               type="submit"
               disabled={submitting}
-              className="flex min-h-12 w-full items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 text-base font-semibold text-white shadow-lg shadow-violet-900/40 transition-[transform,box-shadow,opacity] hover:from-violet-500 hover:to-fuchsia-500 hover:shadow-violet-800/50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex min-h-12 w-full items-center justify-center rounded-xl bg-gradient-to-r from-[#2196F3] to-[#5BB8F5] px-4 text-base font-semibold text-white shadow-lg shadow-sky-500/25 transition-[transform,box-shadow,opacity] hover:from-[#1b87e0] hover:to-[#4aadf0] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
             >
               {submitting ? (
                 <span className="flex items-center gap-2">
                   <span
-                    className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"
+                    className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
                     aria-hidden
                   />
                   Creating account…
@@ -190,11 +177,11 @@ export function RegisterForm() {
             </button>
           </form>
 
-          <p className="mt-8 text-center text-sm text-slate-400">
+          <p className="mt-8 text-center text-sm text-slate-600">
             Already have an account?{" "}
             <Link
               href="/login"
-              className="font-medium text-violet-400 underline-offset-4 transition-colors hover:text-violet-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-400"
+              className="font-medium text-sky-700 underline-offset-4 transition-colors hover:text-sky-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
             >
               Sign in
             </Link>

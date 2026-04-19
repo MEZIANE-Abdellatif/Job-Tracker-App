@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { AccessTokenModule } from "@/components/AccessTokenModule";
+import { BubbleBackground } from "@/components/ui/BubbleBackground";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,9 +30,12 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="relative flex min-h-full flex-col">
+        <BubbleBackground />
         <AccessTokenModule />
-        {children}
+        <div className="relative z-10 flex min-h-full flex-1 flex-col">
+          {children}
+        </div>
       </body>
     </html>
   );

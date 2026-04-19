@@ -34,3 +34,31 @@ export type ApiErrorBody = {
   statusCode: number;
   message: string;
 };
+
+/** `GET /api/applications/stats` — `byStatus` keys match backend `Status` enum. */
+export type ApplicationStats = {
+  total: number;
+  byStatus: Record<ApplicationStatus, number>;
+};
+
+export type CreateApplicationInput = {
+  company: string;
+  position: string;
+  location: string;
+  notes: string;
+  jobUrl: string;
+  salaryMin: string;
+  salaryMax: string;
+  status: ApplicationStatus;
+};
+
+export type CreateApplicationPayload = {
+  company: string;
+  position: string;
+  location?: string;
+  notes?: string;
+  jobUrl?: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  status?: ApplicationStatus;
+};

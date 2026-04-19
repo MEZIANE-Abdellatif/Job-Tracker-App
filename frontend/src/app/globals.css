@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --page-bg-top: #e8f4fd;
+  --page-bg-bottom: #dbeeff;
+  --accent: #2196f3;
+  --accent-bright: #5bb8f5;
+  --foreground: #0c3d5c;
+  --foreground-muted: #3d5a73;
+  --background: var(--page-bg-top);
+  --card-surface: rgba(255, 255, 255, 0.78);
+  --card-border: rgba(91, 184, 245, 0.45);
 }
 
 @theme inline {
@@ -12,15 +19,100 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
+  min-height: 100%;
+  background: linear-gradient(
+    168deg,
+    var(--page-bg-top) 0%,
+    var(--page-bg-bottom) 48%,
+    #cfe9ff 100%
+  );
+  background-attachment: fixed;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Pointer affordance: links, buttons, and other primary click targets */
+a[href]:not([aria-disabled="true"]),
+area[href],
+button:not(:disabled),
+input[type="submit"]:not(:disabled),
+input[type="button"]:not(:disabled),
+input[type="reset"]:not(:disabled),
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+select:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+[role="link"]:not([aria-disabled="true"]),
+[role="tab"]:not([aria-disabled="true"]),
+summary {
+  cursor: pointer;
+}
+
+button:disabled,
+input[type="submit"]:disabled,
+input[type="button"]:disabled,
+input[type="reset"]:disabled,
+input[type="checkbox"]:disabled,
+input[type="radio"]:disabled,
+select:disabled,
+[role="button"][aria-disabled="true"],
+[role="link"][aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+/* Floating bubbles (see BubbleBackground.tsx) */
+.bubble-field .bubble {
+  background: radial-gradient(
+    circle at 32% 28%,
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(200, 235, 255, 0.42) 40%,
+    rgba(91, 184, 245, 0.22) 68%,
+    rgba(33, 150, 243, 0.1) 100%
+  );
+  box-shadow:
+    inset 0 0 12px rgba(255, 255, 255, 0.75),
+    0 0 22px rgba(91, 184, 245, 0.12);
+  animation-name: bubble-rise;
+  animation-duration: var(--bubble-duration, 40s);
+  animation-delay: var(--bubble-delay, 0s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes bubble-rise {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0;
+  }
+  7% {
+    opacity: var(--bubble-peak-opacity, 0.35);
+  }
+  48% {
+    transform: translate3d(var(--bubble-drift, 12px), -52vh, 0) scale(1.05);
+  }
+  93% {
+    opacity: var(--bubble-peak-opacity, 0.35);
+  }
+  100% {
+    transform: translate3d(
+        calc(var(--bubble-drift, 12px) * -0.55),
+        -118vh,
+        0
+      )
+      scale(0.9);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble-field .bubble {
+    animation: none;
+    opacity: 0.12;
+    transform: translate3d(0, -20vh, 0) scale(0.95);
+  }
 }

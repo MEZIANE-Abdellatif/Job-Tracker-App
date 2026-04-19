@@ -4,10 +4,11 @@ import { ApplicationsList } from "@/components/applications/ApplicationsList";
 import { AuthBackToHomeLink } from "@/components/auth/AuthBackToHomeLink";
 import { StatsBar } from "@/components/dashboard/StatsBar";
 import { SessionActions } from "@/components/dashboard/SessionActions";
+import { BRAND_NAME } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: "Dashboard",
-  description: "Your Job tracker dashboard",
+  description: `Your ${BRAND_NAME} dashboard — applications and status at a glance.`,
 };
 
 export default function DashboardPage() {
@@ -16,8 +17,8 @@ export default function DashboardPage() {
       <main className="relative z-10 mx-auto max-w-4xl px-4 py-14 sm:px-6 sm:py-20">
         <div className="rounded-2xl border border-sky-200/70 bg-white/75 p-8 shadow-[0_16px_56px_-14px_rgba(33,150,243,0.18)] backdrop-blur-xl sm:p-10">
           <AuthBackToHomeLink />
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-sky-600">
-            Job tracker
+          <p className="text-sm font-semibold tracking-[0.22em] text-sky-700 sm:text-base">
+            {BRAND_NAME}
           </p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
             Dashboard

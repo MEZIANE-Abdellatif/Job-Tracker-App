@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 
 import { RegisterForm } from "@/components/auth/RegisterForm";
+import { BRAND_NAME } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: "Create account",
-  description: "Register for Job tracker",
+  description: `Create an account for ${BRAND_NAME}.`,
 };
 
 export default function RegisterPage() {

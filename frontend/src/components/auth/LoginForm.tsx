@@ -6,6 +6,7 @@ import { useCallback, useState, type FormEvent } from "react";
 
 import { AuthBackToHomeLink } from "@/components/auth/AuthBackToHomeLink";
 import { setAccessToken } from "@/lib/access-token";
+import { BRAND_NAME } from "@/lib/brand";
 import {
   readApiErrorMessage,
   validateEmail,
@@ -77,8 +78,8 @@ export function LoginForm() {
       <div className="relative z-10 mx-auto flex min-h-full max-w-lg flex-col justify-center px-4 py-10 sm:px-6 sm:py-16">
         <AuthBackToHomeLink />
         <div className="mb-8 text-center sm:mb-10">
-          <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-sky-600">
-            Job tracker
+          <p className="mb-2 text-sm font-semibold tracking-[0.22em] text-sky-700 sm:text-base">
+            {BRAND_NAME}
           </p>
           <h1 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
             Welcome back

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { AccessTokenModule } from "@/components/AccessTokenModule";
 import { BubbleBackground } from "@/components/ui/BubbleBackground";
+import { BRAND_NAME } from "@/lib/brand";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,8 +17,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Job tracker",
-  description: "Track job applications in one place",
+  title: {
+    default: BRAND_NAME,
+    template: `%s · ${BRAND_NAME}`,
+  },
+  description: `Track job applications in one place with ${BRAND_NAME}.`,
 };
 
 export default function RootLayout({

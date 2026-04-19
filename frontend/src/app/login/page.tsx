@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 
 import { LoginForm } from "@/components/auth/LoginForm";
+import { BRAND_NAME } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: "Sign in",
-  description: "Log in to Job tracker",
+  description: `Sign in to ${BRAND_NAME}.`,
 };
 
 export default function LoginPage() {

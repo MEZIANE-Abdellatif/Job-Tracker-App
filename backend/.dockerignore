@@ -1,0 +1,16 @@
+node_modules
+dist
+coverage
+.env
+.env.*
+*.log
+.git
+.gitignore
+Dockerfile
+.dockerignore
+tests
+**/*.test.ts
+eslint.config.cjs
+.prettierignore
+.prettierrc
+tsconfig.eslint.json

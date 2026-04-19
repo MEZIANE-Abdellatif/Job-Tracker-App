@@ -13,6 +13,16 @@ async function start(): Promise<void> {
     console.log("Database connected");
   } catch (err) {
     console.error("Database connection failed:", err);
+    const code =
+      err && typeof err === "object" && "errorCode" in err
+        ? String((err as { errorCode?: unknown }).errorCode)
+        : "";
+    if (code === "P1000") {
+      console.error(
+        "\nThe API did not start: Postgres rejected `DATABASE_URL` (wrong user, password, host, port, or database).\n" +
+          "Update backend/.env, URL-encode special characters in the password if needed, then run `npm run dev` again.\n",
+      );
+    }
     await prisma.$disconnect().catch(() => undefined);
     process.exit(1);
   }

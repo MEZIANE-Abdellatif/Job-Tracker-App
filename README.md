@@ -77,6 +77,26 @@ npm run dev
 
 Open **http://localhost:3000**. Browser requests to the API use the URL above; CORS on the backend must allow the frontend origin (`CORS_ORIGIN` in production).
 
+## Docker (optional full stack)
+
+From the **repository root**:
+
+```bash
+docker compose up --build
+```
+
+- **Postgres:** `localhost:5433` → container `5432` (avoids clashing with a Postgres install already on host `5432`). User / password / DB in compose: `tasktracker` / `tasktracker` / `task_manager`.  
+- **API:** http://localhost:3001 — runs `prisma migrate deploy` then `node dist/index.js`.  
+- **UI:** http://localhost:3000 — built with `NEXT_PUBLIC_API_BASE_URL=http://localhost:3001` so the browser still talks to the API on the host.
+
+Override JWT secrets for anything beyond local throwaway keys:
+
+```bash
+JWT_SECRET="..." JWT_REFRESH_SECRET="..." docker compose up --build
+```
+
+**Images:** `backend/Dockerfile`, `frontend/Dockerfile` (Next **standalone** output). **Compose:** `docker-compose.yml` at the repo root.
+
 ## Scripts (summary)
 
 | Location   | Command        | Purpose        |

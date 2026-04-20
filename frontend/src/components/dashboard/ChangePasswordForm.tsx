@@ -52,7 +52,11 @@ function validateForm(
   return errors;
 }
 
-export function ChangePasswordForm() {
+type ChangePasswordFormProps = {
+  onSuccess?: () => void;
+};
+
+export function ChangePasswordForm({ onSuccess }: ChangePasswordFormProps) {
   const router = useRouter();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -87,6 +91,7 @@ export function ChangePasswordForm() {
         return;
       }
 
+      onSuccess?.();
       clearAccessToken();
       router.push("/login");
     } catch (err) {
@@ -97,21 +102,15 @@ export function ChangePasswordForm() {
   }
 
   return (
-    <section className="w-full rounded-2xl border border-sky-200/70 bg-white/70 p-4 sm:p-6">
-      <h2 className="text-base font-semibold text-slate-900 sm:text-lg">Security</h2>
-      <p className="mt-1 text-sm text-slate-600">
-        Update your password. You will be asked to sign in again after saving.
-      </p>
-
-      <form className="mt-4 space-y-4" onSubmit={onSubmit} noValidate>
-        {formError ? (
-          <div
-            role="alert"
-            className="rounded-xl border border-rose-300/60 bg-rose-50/90 px-4 py-3 text-sm text-rose-900"
-          >
-            {formError}
-          </div>
-        ) : null}
+    <form className="space-y-4" onSubmit={onSubmit} noValidate>
+      {formError ? (
+        <div
+          role="alert"
+          className="rounded-xl border border-rose-300/60 bg-rose-50/90 px-4 py-3 text-sm text-rose-900"
+        >
+          {formError}
+        </div>
+      ) : null}
 
         <div className="space-y-2">
           <label htmlFor="current-password" className="block text-sm font-medium text-slate-800">
@@ -217,7 +216,6 @@ export function ChangePasswordForm() {
             "Update password"
           )}
         </button>
-      </form>
-    </section>
+    </form>
   );
 }

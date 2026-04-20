@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 
 import { ApplicationsList } from "@/components/applications/ApplicationsList";
 import { AuthBackToHomeLink } from "@/components/auth/AuthBackToHomeLink";
-import { DashboardApplicationCreatedBanner } from "@/components/dashboard/DashboardApplicationCreatedBanner";
 import { StatsBar } from "@/components/dashboard/StatsBar";
 import { SessionActions } from "@/components/dashboard/SessionActions";
 import { BRAND_NAME } from "@/lib/brand";
@@ -19,20 +17,22 @@ export default function DashboardPage() {
       <main className="relative z-10 mx-auto max-w-4xl px-4 py-14 sm:px-6 sm:py-20">
         <div className="rounded-2xl border border-sky-200/70 bg-white/75 p-8 shadow-[0_16px_56px_-14px_rgba(33,150,243,0.18)] backdrop-blur-xl sm:p-10">
           <AuthBackToHomeLink />
-          <p className="text-sm font-semibold tracking-[0.22em] text-sky-700 sm:text-base">
-            {BRAND_NAME}
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            Dashboard
-          </h1>
-          <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            Track where every application stands. Totals and status breakdown update from your
-            account.
-          </p>
-          <Suspense fallback={null}>
-            <DashboardApplicationCreatedBanner />
-          </Suspense>
+          <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-sm font-semibold tracking-[0.22em] text-sky-700 sm:text-base">
+                {BRAND_NAME}
+              </p>
+              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                Dashboard
+              </h1>
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
+                Track where every application stands. Totals and status breakdown update from your
+                account.
+              </p>
+            </div>
 
+            <SessionActions />
+          </div>
           <div className="mt-10">
             <StatsBar />
           </div>
@@ -41,10 +41,6 @@ export default function DashboardPage() {
 
           <div className="mt-2">
             <ApplicationsList />
-          </div>
-
-          <div className="mt-12">
-            <SessionActions />
           </div>
         </div>
       </main>

@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import { ApplicationsList } from "@/components/applications/ApplicationsList";
 import { AuthBackToHomeLink } from "@/components/auth/AuthBackToHomeLink";
+import { DashboardApplicationCreatedBanner } from "@/components/dashboard/DashboardApplicationCreatedBanner";
 import { StatsBar } from "@/components/dashboard/StatsBar";
 import { SessionActions } from "@/components/dashboard/SessionActions";
 import { BRAND_NAME } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: "Dashboard",
-  description: `Your ${BRAND_NAME} dashboard — applications and status at a glance.`,
+  description: `Your ${BRAND_NAME} dashboard: applications and status at a glance.`,
 };
 
 export default function DashboardPage() {
@@ -24,9 +26,12 @@ export default function DashboardPage() {
             Dashboard
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            Track where every application stands—totals and status breakdown
-            update from your account.
+            Track where every application stands. Totals and status breakdown update from your
+            account.
           </p>
+          <Suspense fallback={null}>
+            <DashboardApplicationCreatedBanner />
+          </Suspense>
 
           <div className="mt-10">
             <StatsBar />

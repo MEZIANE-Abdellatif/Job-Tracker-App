@@ -12,7 +12,9 @@ import {
   type CreateApplicationFormValues,
   validateCreateApplication,
 } from "@/lib/application-form-utils";
+import { setDashboardCreatedBannerPending } from "@/components/dashboard/DashboardApplicationCreatedBanner";
 import { apiFetch } from "@/lib/api";
+import { userFacingCatchError } from "@/lib/user-facing-error";
 
 const INITIAL_VALUES: CreateApplicationFormValues = {
   company: "",
@@ -90,9 +92,10 @@ export function CreateApplicationForm() {
         return;
       }
 
-      router.push("/dashboard");
+      setDashboardCreatedBannerPending();
+      router.push("/dashboard?created=1");
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : "Could not reach the server.");
+      setFormError(userFacingCatchError(err, "create application"));
     } finally {
       setSubmitting(false);
     }

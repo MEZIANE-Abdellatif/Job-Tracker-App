@@ -2,12 +2,15 @@ import bcrypt from "bcrypt";
 import jwt, { type Algorithm, type JwtPayload, type SignOptions } from "jsonwebtoken";
 
 import { HttpError } from "../../lib/http-error";
-import type { LoginDto, RegisterDto } from "./auth.dto";
+import type { ChangePasswordDto, LoginDto, RegisterDto } from "./auth.dto";
 import * as authRepository from "./auth.repository";
 
 const SYMMETRIC_ALGORITHMS: readonly Algorithm[] = ["HS256", "HS384", "HS512"];
 
 const INVALID_CREDENTIALS = "Invalid email or password";
+const INVALID_CURRENT_PASSWORD = "Current password is incorrect";
+const PASSWORD_MISMATCH = "New password confirmation does not match";
+const SAME_PASSWORD = "New password must be different from current password";
 const INVALID_SESSION = "Invalid or expired session";
 const UNAUTHORIZED_ACCESS = "Unauthorized";
 
@@ -180,4 +183,27 @@ export async function refreshAccessToken(refreshToken: string | undefined): Prom
 
   const accessToken = signAccessTokenForUser(user);
   return { accessToken };
+}
+
+export async function changePassword(userId: string, dto: ChangePasswordDto): Promise<void> {
+  if (dto.newPassword !== dto.confirmNewPassword) {
+    throw new HttpError(400, PASSWORD_MISMATCH);
+  }
+  if (dto.currentPassword === dto.newPassword) {
+    throw new HttpError(400, SAME_PASSWORD);
+  }
+
+  const user = await authRepository.findById(userId);
+  if (!user) {
+    throw new HttpError(401, UNAUTHORIZED_ACCESS);
+  }
+
+  const currentPasswordOk = await bcrypt.compare(dto.currentPassword, user.passwordHash);
+  if (!currentPasswordOk) {
+    throw new HttpError(401, INVALID_CURRENT_PASSWORD);
+  }
+
+  const saltRounds = Number(process.env.BCRYPT_ROUNDS) || 12;
+  const passwordHash = await bcrypt.hash(dto.newPassword, saltRounds);
+  await authRepository.updatePasswordHash(userId, passwordHash);
 }

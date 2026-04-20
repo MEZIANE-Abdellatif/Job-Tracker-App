@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 
 import { AuthBackToHomeLink } from "@/components/auth/AuthBackToHomeLink";
 import { setAccessToken } from "@/lib/access-token";
@@ -13,6 +13,7 @@ import {
   validatePassword,
 } from "@/lib/auth-form-utils";
 import { apiFetch } from "@/lib/api";
+import { userFacingCatchError } from "@/lib/user-facing-error";
 import type { LoginResponse } from "@/types";
 
 export function LoginForm() {
@@ -23,6 +24,15 @@ export function LoginForm() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [accountCreatedBanner, setAccountCreatedBanner] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("registered") !== "1") return;
+    setAccountCreatedBanner(true);
+    router.replace("/login", { scroll: false });
+  }, [router]);
 
   const runClientValidation = useCallback((): boolean => {
     const eErr = validateEmail(email);
@@ -65,9 +75,7 @@ export function LoginForm() {
 
       setFormError(await readApiErrorMessage(res));
     } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : "Could not reach the server.";
-      setFormError(msg);
+      setFormError(userFacingCatchError(err, "login"));
     } finally {
       setSubmitting(false);
     }
@@ -91,6 +99,21 @@ export function LoginForm() {
         </div>
 
         <div className="rounded-2xl border border-sky-200/70 bg-white/75 p-6 shadow-[0_16px_56px_-14px_rgba(33,150,243,0.18)] backdrop-blur-xl sm:p-8">
+          {accountCreatedBanner ? (
+            <div
+              role="status"
+              className="mb-6 flex flex-col gap-2 rounded-xl border border-emerald-300/70 bg-emerald-50/90 px-4 py-3 text-sm text-emerald-950 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <p>Account created. You can sign in now.</p>
+              <button
+                type="button"
+                onClick={() => setAccountCreatedBanner(false)}
+                className="shrink-0 self-end rounded-lg px-2 py-1 text-xs font-medium text-emerald-900 underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:self-auto"
+              >
+                Dismiss
+              </button>
+            </div>
+          ) : null}
           <form className="space-y-6" onSubmit={handleSubmit} noValidate>
             {formError ? (
               <div

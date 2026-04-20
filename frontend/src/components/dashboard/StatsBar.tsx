@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { apiFetch } from "@/lib/api";
-import type { ApiErrorBody, ApplicationStats, ApplicationStatus } from "@/types";
+import { readSafeApiErrorMessage, userFacingCatchError } from "@/lib/user-facing-error";
+import type { ApplicationStats, ApplicationStatus } from "@/types";
 
 const STATUS_ORDER: { status: ApplicationStatus; label: string }[] = [
   { status: "APPLIED", label: "Applied" },
@@ -46,15 +47,7 @@ function parseStats(json: unknown): ApplicationStats | null {
 }
 
 async function readErrorMessage(res: Response): Promise<string> {
-  try {
-    const data = (await res.json()) as Partial<ApiErrorBody>;
-    if (typeof data.message === "string" && data.message.length > 0) {
-      return data.message;
-    }
-  } catch {
-    /* ignore */
-  }
-  return "Could not load statistics.";
+  return readSafeApiErrorMessage(res, "Could not load statistics.");
 }
 
 function StatSkeleton({ hero = false }: { hero?: boolean }) {
@@ -95,9 +88,7 @@ export function StatsBar() {
       setData(parsed);
     } catch (e) {
       setData(null);
-      setError(
-        e instanceof Error ? e.message : "Could not reach the server.",
-      );
+      setError(userFacingCatchError(e, "stats"));
     } finally {
       setLoading(false);
     }

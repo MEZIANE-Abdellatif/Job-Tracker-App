@@ -11,6 +11,7 @@ import {
   validateEmail,
   validatePassword,
 } from "@/lib/auth-form-utils";
+import { userFacingCatchError } from "@/lib/user-facing-error";
 import { apiFetch } from "@/lib/api";
 
 export function RegisterForm() {
@@ -47,15 +48,13 @@ export function RegisterForm() {
       });
 
       if (res.ok) {
-        router.push("/login");
+        router.push("/login?registered=1");
         return;
       }
 
       setFormError(await readApiErrorMessage(res));
     } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : "Could not reach the server.";
-      setFormError(msg);
+      setFormError(userFacingCatchError(err, "register"));
     } finally {
       setSubmitting(false);
     }

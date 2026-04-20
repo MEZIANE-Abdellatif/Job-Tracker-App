@@ -1,4 +1,4 @@
-import type { ApiErrorBody } from "@/types";
+import { readSafeApiErrorMessage } from "@/lib/user-facing-error";
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -16,13 +16,5 @@ export function validatePassword(value: string): string | null {
 }
 
 export async function readApiErrorMessage(res: Response): Promise<string> {
-  try {
-    const data = (await res.json()) as Partial<ApiErrorBody>;
-    if (typeof data.message === "string" && data.message.length > 0) {
-      return data.message;
-    }
-  } catch {
-    /* ignore */
-  }
-  return "Something went wrong. Please try again.";
+  return readSafeApiErrorMessage(res, "Something went wrong. Please try again.");
 }

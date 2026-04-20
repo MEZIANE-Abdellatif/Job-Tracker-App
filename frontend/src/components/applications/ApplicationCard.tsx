@@ -6,6 +6,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 
 import { readApiErrorMessage } from "@/lib/application-form-utils";
+import { userFacingCatchError } from "@/lib/user-facing-error";
 import { apiFetch } from "@/lib/api";
 import type { Application } from "@/types";
 
@@ -92,7 +93,7 @@ export function ApplicationCard({ application, onDeleted }: ApplicationCardProps
         router.push("/dashboard");
       }
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : "Could not reach the server.");
+      setDeleteError(userFacingCatchError(err, "delete application"));
     } finally {
       setDeleting(false);
     }

@@ -27,3 +27,10 @@ export async function createUser(params: { email: string; passwordHash: string }
     throw e;
   }
 }
+
+export async function updatePasswordHash(userId: string, passwordHash: string): Promise<void> {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { passwordHash },
+  });
+}

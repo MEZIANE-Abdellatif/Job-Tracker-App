@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 
 import { apiFetch } from "@/lib/api";
-import type { ApiErrorBody, Application, ApplicationStatus } from "@/types";
+import type { Application, ApplicationStatus } from "@/types";
+import { readSafeApiErrorMessage, userFacingCatchError } from "@/lib/user-facing-error";
 
 import { JobBoardLinks } from "@/components/job-boards/JobBoardLinks";
 
@@ -83,15 +84,7 @@ function parseList(json: unknown): Application[] | null {
 }
 
 async function readErrorMessage(res: Response): Promise<string> {
-  try {
-    const data = (await res.json()) as Partial<ApiErrorBody>;
-    if (typeof data.message === "string" && data.message.length > 0) {
-      return data.message;
-    }
-  } catch {
-    /* ignore */
-  }
-  return "Could not load applications.";
+  return readSafeApiErrorMessage(res, "Could not load applications.");
 }
 
 function ListSkeleton() {
@@ -187,7 +180,7 @@ export function ApplicationsList() {
       setItems(parsed);
     } catch (e) {
       setItems(null);
-      setError(e instanceof Error ? e.message : "Could not reach the server.");
+      setError(userFacingCatchError(e, "applications list"));
     } finally {
       setLoading(false);
     }

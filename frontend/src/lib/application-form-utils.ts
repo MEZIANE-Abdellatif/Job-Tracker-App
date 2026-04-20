@@ -1,4 +1,5 @@
-import type { ApiErrorBody, ApplicationStatus, CreateApplicationPayload } from "@/types";
+import { readSafeApiErrorMessage } from "@/lib/user-facing-error";
+import type { ApplicationStatus, CreateApplicationPayload } from "@/types";
 
 export const APPLICATION_STATUSES: readonly ApplicationStatus[] = [
   "APPLIED",
@@ -108,13 +109,5 @@ export function toCreateApplicationPayload(
 }
 
 export async function readApiErrorMessage(res: Response): Promise<string> {
-  try {
-    const data = (await res.json()) as Partial<ApiErrorBody>;
-    if (typeof data.message === "string" && data.message.length > 0) {
-      return data.message;
-    }
-  } catch {
-    /* ignore */
-  }
-  return "Could not save application.";
+  return readSafeApiErrorMessage(res, "Could not save application.");
 }

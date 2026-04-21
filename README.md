@@ -1,113 +1,64 @@
 # JOB TRACKER
 
-Full-stack web app to **track job applications** in one place: register, sign in, add roles with status and details, filter by pipeline stage, and see dashboard totals. The UI also surfaces **quick links to major job boards** (home and dashboard) using shared data and components.
+JOB TRACKER is a full-stack web application for managing a personal job-search pipeline.  
+It helps users track applications from first submission to final outcome, with a clear dashboard view, status-based filtering, and fast in-context editing.
 
-## Monorepo layout
+## Project Overview
 
-| Directory   | Role |
-|------------|------|
-| `frontend` | Next.js (App Router) UI — port **3000** in dev |
-| `backend`  | Express + Prisma API — port **3001** in dev |
+- **Purpose:** Keep job applications organized in one focused workspace.
+- **Core flow:** Register or sign in, add applications, update status over time, and monitor progress from the dashboard.
+- **UX focus:** Smooth dashboard-first actions with modal-based create/change-password flows, lightweight navigation, and responsive layouts.
 
-## Stack
+## Main Capabilities
 
-- **Frontend:** Next.js 16, React 19, TypeScript (strict), Tailwind CSS 4, Geist fonts  
-- **Backend:** Node 20+, Express, Prisma, PostgreSQL, JWT access tokens + httpOnly refresh cookie, bcrypt  
+- User authentication with secure session handling.
+- Application lifecycle management (create, read, update, delete).
+- Status segmentation across pipeline stages (Applied, Interview, Offer, Rejected, Ghosted).
+- Dashboard analytics and totals for quick decision support.
+- Curated job-board shortcuts integrated in the interface.
 
-## Features (high level)
+## Architecture
 
-- **Auth:** Register, login, logout; access token in memory with refresh via cookie (see `AccessTokenModule` / `api.ts`).  
-- **Applications:** List with **status filters** (All, Applied, Interview, Offer, Rejected, Ghosted), create, edit, delete; stats on the dashboard.  
-- **Job boards:** Curated outbound links (LinkedIn Jobs, Indeed, Pracuj.pl, The Protocol, No Fluff Jobs, Just Join IT) — shared list in `frontend/src/lib/job-boards.ts` and `JobBoardLinks` (grid on home, horizontal strip on dashboard).  
-- **Navigation:** Back-to-home control on login, register, and dashboard (`AuthBackToHomeLink`).  
-- **Branding:** Official name **JOB TRACKER** is centralized in `frontend/src/lib/brand.ts` for titles and metadata; favicon via `frontend/src/app/icon.jpg` and `apple-icon.jpg`.
+- **Monorepo structure**
+  - `frontend`: Next.js application (App Router UI layer)
+  - `backend`: Express API with Prisma data layer
+- **Data model**
+  - `User` entity with credential hash and ownership of applications
+  - `Application` entity containing role details, salary range, links, notes, and status
 
-## Prerequisites
+## Technologies Used
 
-- Node.js **20+**  
-- **PostgreSQL** for the API  
+### Frontend
 
-## Backend setup
+- Next.js 16
+- React 19
+- TypeScript (strict mode)
+- Tailwind CSS 4
 
-```bash
-cd backend
-npm install
-```
+### Backend
 
-Create a `.env` file (values are examples — use strong secrets in production):
+- Node.js 20+
+- Express
+- Prisma ORM
+- PostgreSQL
+- JWT (access token + refresh token pattern)
+- bcrypt (password hashing)
 
-```bash
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/job_tracker"
-JWT_SECRET="your-access-token-secret-at-least-32-chars"
-JWT_REFRESH_SECRET="your-refresh-secret-at-least-32-chars"
-# Optional overrides:
-# PORT=3001
-# JWT_ACCESS_EXPIRES_IN=15m
-# JWT_REFRESH_EXPIRES_IN=7d
-# CORS_ORIGIN=http://localhost:3000   # required in production
-```
+### Tooling
 
-Apply migrations and start the API:
+- ESLint
+- Jest
+- Docker / Docker Compose
 
-```bash
-npx prisma migrate deploy   # or: npm run prisma:migrate -- for dev migrate
-npm run dev
-```
+## Container Health Checks
 
-Health check: `GET http://localhost:3001/health`
+The Docker Compose stack includes service-level health checks to improve startup reliability and runtime observability.
 
-## Frontend setup
-
-```bash
-cd frontend
-npm install
-```
-
-Create `frontend/.env`:
-
-```bash
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
-```
-
-Start the app:
-
-```bash
-npm run dev
-```
-
-Open **http://localhost:3000**. Browser requests to the API use the URL above; CORS on the backend must allow the frontend origin (`CORS_ORIGIN` in production).
-
-## Docker (optional full stack)
-
-From the **repository root**:
-
-```bash
-docker compose up --build
-```
-
-- **Postgres:** `localhost:5433` → container `5432` (avoids clashing with a Postgres install already on host `5432`). User / password / DB in compose: `tasktracker` / `tasktracker` / `task_manager`.  
-- **API:** http://localhost:3001 — runs `prisma migrate deploy` then `node dist/index.js`.  
-- **UI:** http://localhost:3000 — built with `NEXT_PUBLIC_API_BASE_URL=http://localhost:3001` so the browser still talks to the API on the host.
-
-Override JWT secrets for anything beyond local throwaway keys:
-
-```bash
-JWT_SECRET="..." JWT_REFRESH_SECRET="..." docker compose up --build
-```
-
-**Images:** `backend/Dockerfile`, `frontend/Dockerfile` (Next **standalone** output). **Compose:** `docker-compose.yml` at the repo root.
-
-## Scripts (summary)
-
-| Location   | Command        | Purpose        |
-|-----------|----------------|----------------|
-| `frontend`| `npm run dev`  | Next dev server |
-| `frontend`| `npm run build`| Production build |
-| `frontend`| `npm run lint` | ESLint         |
-| `backend` | `npm run dev`  | API with watch  |
-| `backend` | `npm run test` | Jest tests       |
-| `backend` | `npm run lint` | ESLint           |
+- **PostgreSQL:** Uses `pg_isready` to confirm database readiness.
+- **Backend API:** Probes `GET /health` on port `3001`.
+- **Frontend UI:** Probes `GET /health` on port `3000`.
+- **Startup ordering:** Frontend waits for a healthy backend; backend waits for a healthy database.
 
 ## License
 
-See the repository `LICENSE` file.
+See `LICENSE`.

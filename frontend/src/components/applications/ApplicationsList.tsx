@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { apiFetch } from "@/lib/api";
-import type { Application, ApplicationStatus } from "@/types";
+import type { Application, ApplicationsPage, ApplicationStatus } from "@/types";
 import { readSafeApiErrorMessage, userFacingCatchError } from "@/lib/user-facing-error";
 
 import { CreateApplicationForm } from "@/components/applications/CreateApplicationForm";
@@ -73,15 +73,21 @@ function parseApplication(raw: unknown): Application | null {
   };
 }
 
-function parseList(json: unknown): Application[] | null {
-  if (!Array.isArray(json)) return null;
-  const out: Application[] = [];
-  for (const item of json) {
+function parsePage(json: unknown): ApplicationsPage | null {
+  if (!isRecord(json)) return null;
+  const rawItems = json.items;
+  const nextCursor = json.nextCursor;
+  const hasMore = json.hasMore;
+  if (!Array.isArray(rawItems)) return null;
+  if (!(typeof nextCursor === "string" || nextCursor === null)) return null;
+  if (typeof hasMore !== "boolean") return null;
+  const items: Application[] = [];
+  for (const item of rawItems) {
     const app = parseApplication(item);
     if (app === null) return null;
-    out.push(app);
+    items.push(app);
   }
-  return out;
+  return { items, nextCursor, hasMore };
 }
 
 async function readErrorMessage(res: Response): Promise<string> {
@@ -184,36 +190,71 @@ export function ApplicationsList() {
   const addModalTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [items, setItems] = useState<Application[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterValue>("ALL");
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [createdBannerVisible, setCreatedBannerVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const load = useCallback(async (options?: { append?: boolean; cursor?: string | null }) => {
+    const append = options?.append ?? false;
+    if (append) {
+      setLoadingMore(true);
+    } else {
+      setLoading(true);
+      setError(null);
+      setNextCursor(null);
+      setHasMore(false);
+    }
     try {
-      const query = activeFilter === "ALL" ? "" : `?status=${activeFilter}`;
-      const res = await apiFetch(`/api/applications${query}`);
+      const params = new URLSearchParams();
+      if (activeFilter !== "ALL") {
+        params.set("status", activeFilter);
+      }
+      params.set("limit", "5");
+      const cursor = options?.cursor;
+      if (append && typeof cursor === "string" && cursor.length > 0) {
+        params.set("cursor", cursor);
+      }
+      const query = params.toString();
+      const res = await apiFetch(`/api/applications${query ? `?${query}` : ""}`);
       if (!res.ok) {
-        setItems(null);
-        setError(await readErrorMessage(res));
+        if (!append) {
+          setItems(null);
+          setError(await readErrorMessage(res));
+        }
         return;
       }
       const json: unknown = await res.json();
-      const parsed = parseList(json);
+      const parsed = parsePage(json);
       if (parsed === null) {
-        setItems(null);
-        setError("Unexpected response from server.");
+        if (!append) {
+          setItems(null);
+          setError("Unexpected response from server.");
+        }
         return;
       }
-      setItems(parsed);
+      setHasMore(parsed.hasMore);
+      setNextCursor(parsed.nextCursor);
+      if (append) {
+        setItems((prev) => [...(prev ?? []), ...parsed.items]);
+      } else {
+        setItems(parsed.items);
+      }
     } catch (e) {
-      setItems(null);
-      setError(userFacingCatchError(e, "applications list"));
+      if (!append) {
+        setItems(null);
+        setError(userFacingCatchError(e, "applications list"));
+      }
     } finally {
-      setLoading(false);
+      if (append) {
+        setLoadingMore(false);
+      } else {
+        setLoading(false);
+      }
     }
   }, [activeFilter]);
 
@@ -256,6 +297,11 @@ export function ApplicationsList() {
     setAddOpen(false);
     setCreatedBannerVisible(true);
     void load();
+  }
+
+  function handleLoadMore(): void {
+    if (!hasMore || nextCursor === null || loadingMore) return;
+    void load({ append: true, cursor: nextCursor });
   }
 
   if (loading) {
@@ -446,6 +492,18 @@ export function ApplicationsList() {
             </li>
           ))}
         </ul>
+        {hasMore ? (
+          <div className="mt-6 flex justify-center">
+            <button
+              type="button"
+              onClick={handleLoadMore}
+              disabled={loadingMore}
+              className="inline-flex min-h-11 items-center justify-center rounded-xl border border-sky-300/80 bg-white px-5 text-sm font-semibold text-sky-900 transition-colors hover:bg-sky-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loadingMore ? "Loading more..." : "Load more"}
+            </button>
+          </div>
+        ) : null}
       </section>
       {mounted && addOpen
         ? createPortal(

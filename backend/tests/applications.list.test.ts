@@ -103,12 +103,18 @@ describe("GET /api/applications", () => {
       .set("Authorization", `Bearer ${token}`)
       .expect(200);
 
-    const body = res.body as { id: string }[];
-    expect(Array.isArray(body)).toBe(true);
-    expect(body).toHaveLength(2);
-    expect(body.map((r) => r.id).sort()).toEqual(["app-a", "app-b"]);
+    const body = res.body as { items: Array<{ id: string }>; hasMore: boolean; nextCursor: string | null };
+    expect(Array.isArray(body.items)).toBe(true);
+    expect(body.items).toHaveLength(2);
+    expect(body.items.map((r) => r.id).sort()).toEqual(["app-a", "app-b"]);
+    expect(body.hasMore).toBe(false);
+    expect(body.nextCursor).toBeNull();
 
-    type FindManyArg = { where: { userId: string }; orderBy: { appliedAt: string } };
+    type FindManyArg = {
+      where: { userId: string };
+      orderBy: Array<{ appliedAt: string } | { id: string }>;
+      take: number;
+    };
     const calls = prismaMock.application.findMany.mock.calls as unknown as [FindManyArg][];
     const firstArg = calls[0]?.[0];
     expect(firstArg).toBeDefined();
@@ -116,7 +122,8 @@ describe("GET /api/applications", () => {
       throw new Error("expected prisma.application.findMany to be called");
     }
     expect(firstArg.where.userId).toBe("user-1");
-    expect(firstArg.orderBy).toEqual({ appliedAt: "desc" });
+    expect(firstArg.orderBy).toEqual([{ appliedAt: "desc" }, { id: "desc" }]);
+    expect(firstArg.take).toBe(6);
   });
 
   it("ignores userId query param; list is scoped to JWT sub only", async () => {
@@ -165,6 +172,33 @@ describe("GET /api/applications", () => {
     type FindManyArg = { where: { userId: string; status?: string } };
     const calls = prismaMock.application.findMany.mock.calls as unknown as [FindManyArg][];
     expect(calls[0]?.[0]?.where.status).toBe("INTERVIEW");
+  });
+
+  it("applies limit query", async () => {
+    prismaMock.application.findMany.mockResolvedValue([]);
+
+    const token = accessTokenForUser("user-1", "u@example.com");
+    await request(app)
+      .get("/api/applications")
+      .query({ limit: "10" })
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
+
+    type FindManyArg = { take: number };
+    const calls = prismaMock.application.findMany.mock.calls as unknown as [FindManyArg][];
+    expect(calls[0]?.[0]?.take).toBe(11);
+  });
+
+  it("returns 400 for invalid cursor", async () => {
+    const token = accessTokenForUser("user-1", "u@example.com");
+    const res = await request(app)
+      .get("/api/applications")
+      .query({ cursor: "invalid-base64" })
+      .set("Authorization", `Bearer ${token}`)
+      .expect(400);
+
+    expect((res.body as { statusCode: number }).statusCode).toBe(400);
+    expect(prismaMock.application.findMany).not.toHaveBeenCalled();
   });
 
   it("returns 400 for invalid status query", async () => {

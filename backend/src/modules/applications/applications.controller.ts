@@ -17,15 +17,27 @@ import {
 } from "./applications.service";
 
 function listApplicationsQueryPayload(query: Request["query"]): Record<string, unknown> {
-  const raw = query["status"];
-  if (raw === undefined) {
-    return {};
+  const out: Record<string, unknown> = {};
+  const statusRaw = query["status"];
+  const limitRaw = query["limit"];
+  const cursorRaw = query["cursor"];
+
+  const statusValue = Array.isArray(statusRaw) ? statusRaw[0] : statusRaw;
+  if (typeof statusValue === "string") {
+    out.status = statusValue;
   }
-  const value = Array.isArray(raw) ? raw[0] : raw;
-  if (typeof value !== "string") {
-    return {};
+
+  const limitValue = Array.isArray(limitRaw) ? limitRaw[0] : limitRaw;
+  if (typeof limitValue === "string") {
+    out.limit = limitValue;
   }
-  return { status: value };
+
+  const cursorValue = Array.isArray(cursorRaw) ? cursorRaw[0] : cursorRaw;
+  if (typeof cursorValue === "string") {
+    out.cursor = cursorValue;
+  }
+
+  return out;
 }
 
 async function handleCreate(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -53,8 +65,8 @@ async function handleList(req: Request, res: Response, next: NextFunction): Prom
       ListApplicationsQueryDto,
       listApplicationsQueryPayload(req.query),
     );
-    const items = await listApplicationsForUser(req.user.id, queryDto);
-    res.status(200).json(items);
+    const result = await listApplicationsForUser(req.user.id, queryDto);
+    res.status(200).json(result);
   } catch (err) {
     next(err);
   }

@@ -68,11 +68,65 @@ export type ApplicationStats = {
   byStatus: Record<Status, number>;
 };
 
+type ListApplicationsCursor = {
+  appliedAt: Date;
+  id: string;
+};
+
+export type ListApplicationsResult = {
+  items: applicationsRepository.ApplicationRecord[];
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
+function decodeCursor(cursor: string | undefined): ListApplicationsCursor | undefined {
+  if (cursor === undefined) return undefined;
+  try {
+    const decoded = Buffer.from(cursor, "base64").toString("utf8");
+    const parsed = JSON.parse(decoded) as Partial<{ appliedAt: string; id: string }>;
+    if (typeof parsed.appliedAt !== "string" || typeof parsed.id !== "string") {
+      throw new HttpError(400, "Invalid cursor");
+    }
+    const appliedAt = new Date(parsed.appliedAt);
+    if (Number.isNaN(appliedAt.getTime())) {
+      throw new HttpError(400, "Invalid cursor");
+    }
+    return { appliedAt, id: parsed.id };
+  } catch (err) {
+    if (err instanceof HttpError) {
+      throw err;
+    }
+    throw new HttpError(400, "Invalid cursor");
+  }
+}
+
+function encodeCursor(row: applicationsRepository.ApplicationRecord): string {
+  return Buffer.from(
+    JSON.stringify({ appliedAt: row.appliedAt.toISOString(), id: row.id }),
+    "utf8",
+  ).toString("base64");
+}
+
 export async function listApplicationsForUser(
   userId: string,
   query: ListApplicationsQueryDto,
-): Promise<applicationsRepository.ApplicationRecord[]> {
-  return applicationsRepository.findApplicationsByUserId(userId, query.status);
+): Promise<ListApplicationsResult> {
+  const limit = Math.min(query.limit ?? 5, 50);
+  const cursor = decodeCursor(query.cursor);
+  const rows = await applicationsRepository.findApplicationsByUserId(
+    userId,
+    query.status,
+    limit,
+    cursor,
+  );
+  const hasMore = rows.length > limit;
+  const items = hasMore ? rows.slice(0, limit) : rows;
+  const last = items[items.length - 1];
+  return {
+    items,
+    hasMore,
+    nextCursor: hasMore && last !== undefined ? encodeCursor(last) : null,
+  };
 }
 
 export async function getApplicationStatsForUser(userId: string): Promise<ApplicationStats> {

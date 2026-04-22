@@ -62,14 +62,27 @@ export async function createApplication(params: {
 export async function findApplicationsByUserId(
   userId: string,
   status?: Status,
+  limit = 20,
+  cursor?: { appliedAt: Date; id: string },
 ): Promise<ApplicationRecord[]> {
+  const where: Prisma.ApplicationWhereInput = {
+    userId,
+    ...(status !== undefined ? { status } : {}),
+    ...(cursor !== undefined
+      ? {
+          OR: [
+            { appliedAt: { lt: cursor.appliedAt } },
+            { appliedAt: cursor.appliedAt, id: { lt: cursor.id } },
+          ],
+        }
+      : {}),
+  };
+
   return prisma.application.findMany({
-    where: {
-      userId,
-      ...(status !== undefined ? { status } : {}),
-    },
+    where,
     select: applicationSelect,
-    orderBy: { appliedAt: "desc" },
+    orderBy: [{ appliedAt: "desc" }, { id: "desc" }],
+    take: limit + 1,
   });
 }
 

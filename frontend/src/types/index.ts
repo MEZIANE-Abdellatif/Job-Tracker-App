@@ -20,6 +20,12 @@ export type Application = {
   updatedAt: string;
 };
 
+export type ApplicationsPage = {
+  items: Application[];
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
 export type LoginResponse = {
   accessToken: string;
 };

@@ -9,6 +9,7 @@ import { authRateLimiter } from "./middleware/auth-rate-limit";
 import { errorHandler } from "./middleware/error-handler";
 import { applicationsRouter } from "./modules/applications/applications.router";
 import { authRouter } from "./modules/auth/auth.router";
+import { profileRouter } from "./modules/profile/profile.router";
 import { prisma } from "./prisma/client";
 
 const app = express();
@@ -32,6 +33,8 @@ app.get("/health", (_req, res, next) => {
 
 app.use("/api/auth", authRateLimiter, authRouter);
 app.use("/api/applications", applicationsRouter);
+app.use("/api/profile", profileRouter);
+app.use("/profile", profileRouter);
 
 app.use((_req, _res, next) => {
   next(new HttpError(404, "Not found"));

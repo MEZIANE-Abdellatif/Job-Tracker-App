@@ -35,3 +35,64 @@ export async function findLastActivityDateByUserId(userId: string): Promise<Date
   });
   return row?.updatedAt ?? null;
 }
+
+export async function findApplicationStatusesByUserId(
+  userId: string,
+): Promise<Array<{ status: Status }>> {
+  return prisma.application.findMany({
+    where: { userId },
+    select: { status: true },
+  });
+}
+
+export async function countApplicationsByUserIdSince(
+  userId: string,
+  since: Date | null,
+): Promise<number> {
+  return prisma.application.count({
+    where: {
+      userId,
+      ...(since === null ? {} : { appliedAt: { gte: since } }),
+    },
+  });
+}
+
+export async function findApplicationAppliedDatesByUserIdSince(
+  userId: string,
+  since: Date,
+): Promise<Array<{ appliedAt: Date }>> {
+  return prisma.application.findMany({
+    where: {
+      userId,
+      appliedAt: { gte: since },
+    },
+    select: { appliedAt: true },
+  });
+}
+
+export async function findApplicationDurationsByUserId(
+  userId: string,
+): Promise<Array<{ appliedAt: Date; updatedAt: Date }>> {
+  return prisma.application.findMany({
+    where: { userId },
+    select: { appliedAt: true, updatedAt: true },
+  });
+}
+
+export async function findApplicationCompaniesByUserId(
+  userId: string,
+): Promise<Array<{ company: string }>> {
+  return prisma.application.findMany({
+    where: { userId },
+    select: { company: true },
+  });
+}
+
+export async function findMostRecentCompanyByUserId(userId: string): Promise<string | null> {
+  const row = await prisma.application.findFirst({
+    where: { userId },
+    orderBy: { updatedAt: "desc" },
+    select: { company: true },
+  });
+  return row?.company ?? null;
+}

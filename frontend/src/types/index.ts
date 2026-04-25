@@ -68,3 +68,28 @@ export type CreateApplicationPayload = {
   salaryMax?: number;
   status?: ApplicationStatus;
 };
+
+export type ProfileSummary = {
+  email: string;
+  accountCreatedAt: string;
+  totalApplications: number;
+  activePipelineCount: number;
+  lastActivityDate: string | null;
+};
+
+export type ProfileAnalyticsRange = "30d" | "90d" | "all";
+
+export type ProfileAnalytics = {
+  statusDistribution: Record<"Applied" | "Interview" | "Offer" | "Rejected" | "Ghosted", number>;
+  interviewRate: number;
+  offerRate: number;
+  applicationsThisPeriod: number;
+  weeklyTrend: Array<{ weekStart: string; count: number }>;
+  avgDaysToUpdate: number;
+};
+
+export type ProfileCompanies = {
+  topCompanies: Array<{ companyName: string; count: number }>;
+  mostRecentCompany: string | null;
+  duplicateApplications: Array<{ companyName: string; count: number }>;
+};

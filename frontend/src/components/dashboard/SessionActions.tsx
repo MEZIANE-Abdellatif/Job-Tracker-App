@@ -77,6 +77,11 @@ export function SessionActions() {
     setChangePasswordOpen(true);
   }
 
+  function goToProfile() {
+    setMenuOpen(false);
+    router.push("/profile");
+  }
+
   function closeChangePasswordModal() {
     setChangePasswordOpen(false);
     triggerRef.current?.focus();
@@ -106,8 +111,16 @@ export function SessionActions() {
           <button
             type="button"
             role="menuitem"
-            onClick={openChangePasswordModal}
+            onClick={goToProfile}
             className="flex min-h-11 w-full items-center rounded-lg px-3 text-left text-sm text-slate-800 transition-colors hover:bg-sky-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
+          >
+            Profile
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={openChangePasswordModal}
+            className="mt-1 flex min-h-11 w-full items-center rounded-lg px-3 text-left text-sm text-slate-800 transition-colors hover:bg-sky-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
           >
             Change password
           </button>

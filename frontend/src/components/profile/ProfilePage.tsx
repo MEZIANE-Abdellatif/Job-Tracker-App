@@ -1,6 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import { AuthBackToHomeLink } from "@/components/auth/AuthBackToHomeLink";
 import { apiFetch } from "@/lib/api";
@@ -36,6 +45,12 @@ function formatDate(iso: string | null): string {
 
 function formatPercent(rate: number): string {
   return `${Math.round(rate * 100)}%`;
+}
+
+function formatWeekLabel(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "Week";
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
 export function ProfilePage() {
@@ -133,6 +148,16 @@ export function ProfilePage() {
       })),
     [analytics],
   );
+
+  const weeklyTrendData = useMemo(
+    () =>
+      (analytics?.weeklyTrend ?? []).slice(-8).map((point) => ({
+        label: formatWeekLabel(point.weekStart),
+        count: point.count,
+      })),
+    [analytics],
+  );
+  const weeklyTrendHasData = weeklyTrendData.some((point) => point.count > 0);
 
   return (
     <div className="relative min-h-full flex-1 overflow-x-hidden bg-transparent text-slate-800">
@@ -245,6 +270,46 @@ export function ProfilePage() {
                       <p className="mt-1 text-2xl font-semibold text-slate-900">
                         {analytics?.applicationsThisPeriod ?? 0}
                       </p>
+                    </div>
+                  </section>
+
+                  <section className="mt-8">
+                    <h2 className="text-lg font-semibold text-slate-900">Weekly trend</h2>
+                    <div className="mt-4 rounded-xl border border-sky-200/70 bg-white/80 p-4">
+                      {weeklyTrendHasData ? (
+                        <div className="h-64 w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart
+                              data={weeklyTrendData}
+                              margin={{ top: 8, right: 8, left: 0, bottom: 8 }}
+                            >
+                              <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" />
+                              <XAxis
+                                dataKey="label"
+                                tick={{ fontSize: 12, fill: "#475569" }}
+                                axisLine={{ stroke: "#cbd5e1" }}
+                                tickLine={false}
+                              />
+                              <YAxis
+                                allowDecimals={false}
+                                tick={{ fontSize: 12, fill: "#475569" }}
+                                axisLine={{ stroke: "#cbd5e1" }}
+                                tickLine={false}
+                              />
+                              <Tooltip
+                                contentStyle={{
+                                  borderRadius: "0.75rem",
+                                  borderColor: "#bae6fd",
+                                }}
+                                labelStyle={{ color: "#0f172a" }}
+                              />
+                              <Bar dataKey="count" name="Applications" fill="#0284c7" radius={[6, 6, 0, 0]} />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-slate-600">No data yet</p>
+                      )}
                     </div>
                   </section>
 

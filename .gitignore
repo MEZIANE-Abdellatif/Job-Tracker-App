@@ -7,6 +7,10 @@ coverage/
 # Next.js local env (copy from .env.local.example)
 frontend/.env*.local
 
+# Backend local env (copy from backend/.env.example)
+backend/.env
+backend/.env.*
+
 # Local-only specs 
 ARCH.md
 SECURITY.md

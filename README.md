@@ -40,7 +40,7 @@ It helps users track applications from first submission to final outcome, with a
 - Node.js 20+
 - Express
 - Prisma ORM
-- PostgreSQL
+- PostgreSQL (hosted on Supabase for deployments; no bundled DB container)
 - JWT (access token + refresh token pattern)
 - bcrypt (password hashing)
 
@@ -54,10 +54,9 @@ It helps users track applications from first submission to final outcome, with a
 
 The Docker Compose stack includes service-level health checks to improve startup reliability and runtime observability.
 
-- **PostgreSQL:** Uses `pg_isready` to confirm database readiness.
 - **Backend API:** Probes `GET /health` on port `3001`.
 - **Frontend UI:** Probes `GET /health` on port `3000`.
-- **Startup ordering:** Frontend waits for a healthy backend; backend waits for a healthy database.
+- **Startup ordering:** Frontend waits for a healthy backend. The database runs outside Compose (Supabase), so readiness is enforced by `DATABASE_URL` and Prisma migrations at API startup.
 
 ## License
 

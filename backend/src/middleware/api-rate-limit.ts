@@ -11,8 +11,22 @@ const baseOptions = {
   },
 };
 
-export const loginRateLimiter = rateLimit({ ...baseOptions, max: 10 });
-export const registerRateLimiter = rateLimit({ ...baseOptions, max: 5 });
-export const refreshRateLimiter = rateLimit({ ...baseOptions, max: 30 });
-export const logoutRateLimiter = rateLimit({ ...baseOptions, max: 20 });
-export const changePasswordRateLimiter = rateLimit({ ...baseOptions, max: 5 });
+export const createApplicationRateLimiter = rateLimit({
+  ...baseOptions,
+  max: 30,
+});
+
+export const deleteApplicationRateLimiter = rateLimit({
+  ...baseOptions,
+  max: 20,
+});
+
+export const readApplicationRateLimiter = rateLimit({
+  ...baseOptions,
+  max: 100,
+});
+
+export const profileRateLimiter = rateLimit({
+  ...baseOptions,
+  max: 60,
+});

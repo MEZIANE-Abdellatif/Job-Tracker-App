@@ -28,12 +28,18 @@ ENV NODE_ENV=production
 
 RUN apt-get update -y \
   && apt-get install -y --no-install-recommends openssl ca-certificates \
+  && (getent group node || groupadd --system node) \
+  && (id -u node >/dev/null 2>&1 || useradd --system --gid node --home-dir /home/node --create-home node) \
   && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
+
+RUN chown -R node:node /app
+
+USER node
 
 EXPOSE 3001
 

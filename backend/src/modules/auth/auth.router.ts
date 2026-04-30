@@ -2,6 +2,13 @@ import { Router } from "express";
 
 import { authenticate } from "../../middleware/authenticate";
 import {
+  changePasswordRateLimiter,
+  loginRateLimiter,
+  logoutRateLimiter,
+  refreshRateLimiter,
+  registerRateLimiter,
+} from "../../middleware/auth-rate-limit";
+import {
   changePasswordForCurrentUser,
   login,
   logout,
@@ -11,8 +18,13 @@ import {
 
 export const authRouter = Router();
 
-authRouter.post("/register", register);
-authRouter.post("/login", login);
-authRouter.post("/refresh", refresh);
-authRouter.post("/logout", logout);
-authRouter.post("/change-password", authenticate, changePasswordForCurrentUser);
+authRouter.post("/register", registerRateLimiter, register);
+authRouter.post("/login", loginRateLimiter, login);
+authRouter.post("/refresh", refreshRateLimiter, refresh);
+authRouter.post("/logout", logoutRateLimiter, logout);
+authRouter.post(
+  "/change-password",
+  changePasswordRateLimiter,
+  authenticate,
+  changePasswordForCurrentUser,
+);

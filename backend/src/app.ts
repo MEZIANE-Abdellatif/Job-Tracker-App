@@ -5,7 +5,6 @@ import helmet from "helmet";
 
 import { createCorsOptions } from "./lib/cors-config";
 import { HttpError } from "./lib/http-error";
-import { authRateLimiter } from "./middleware/auth-rate-limit";
 import { errorHandler } from "./middleware/error-handler";
 import { applicationsRouter } from "./modules/applications/applications.router";
 import { authRouter } from "./modules/auth/auth.router";
@@ -31,7 +30,7 @@ app.get("/health", (_req, res, next) => {
     });
 });
 
-app.use("/api/auth", authRateLimiter, authRouter);
+app.use("/api/auth", authRouter);
 app.use("/api/applications", applicationsRouter);
 app.use("/api/profile", profileRouter);
 app.use("/profile", profileRouter);

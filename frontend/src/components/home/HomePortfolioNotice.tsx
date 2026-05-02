@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { BRAND_NAME } from "@/lib/brand";
+
 export function HomePortfolioNotice() {
   const [open, setOpen] = useState(true);
   const closeRef = useRef<HTMLButtonElement | null>(null);
@@ -43,21 +45,20 @@ export function HomePortfolioNotice() {
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="portfolio-notice-title"
+        aria-labelledby="home-intro-title"
         className="my-auto w-full max-w-md rounded-2xl border border-sky-200/80 bg-white p-5 shadow-[0_22px_70px_-24px_rgba(14,116,144,0.45)] sm:p-6"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            <h2 id="portfolio-notice-title" className="text-lg font-semibold text-slate-900">
-              Portfolio notice
+            <h2 id="home-intro-title" className="text-lg font-semibold text-slate-900">
+              {BRAND_NAME}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate-600">
-              This deployment does not use a custom domain or SSL yet. It is a portfolio project;
-              domain budget is invested in <strong className="text-slate-800">Mazzinka</strong> and{" "}
-              <strong className="text-slate-800">Atlas</strong> (links are in my CV).
+              A lightweight job-application tracker: sign in, add roles you applied for, and keep your
+              pipeline organized in one place.
             </p>
-            <p className="mt-3 text-sm font-medium text-slate-800">Developed by Abdellatif Meziane.</p>
+            <p className="mt-3 text-sm font-medium text-slate-800">Built by Abdellatif Meziane.</p>
           </div>
           <button
             ref={closeRef}

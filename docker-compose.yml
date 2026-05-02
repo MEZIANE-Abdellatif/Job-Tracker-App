@@ -63,6 +63,20 @@ services:
       retries: 10
       start_period: 20s
 
+  caddy:
+    image: caddy:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - frontend
+      - backend
+
   prometheus:
     image: prom/prometheus:latest
     restart: unless-stopped
@@ -111,4 +125,6 @@ services:
       start_period: 40s
 
 volumes:
+  caddy-data:
+  caddy-config:
   grafana-data:

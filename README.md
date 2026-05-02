@@ -15,6 +15,7 @@ It helps users track applications from first submission to final outcome, with a
 - Application lifecycle management (create, read, update, delete).
 - Status segmentation across pipeline stages (Applied, Interview, Offer, Rejected, Ghosted).
 - Dashboard analytics and totals for quick decision support.
+- Profile insights: summary metrics, status distribution, rates, company insights, and weekly trend chart.
 - Curated job-board shortcuts integrated in the interface.
 
 ## Architecture
@@ -49,14 +50,35 @@ It helps users track applications from first submission to final outcome, with a
 - ESLint
 - Jest
 - Docker / Docker Compose
+- k6 (load/stress testing)
+
+### Observability
+
+- Prometheus
+- Grafana
+- node-exporter
+- cAdvisor
+
+### CI/CD
+
+- GitHub Actions (`.github/workflows/deploy.yml`)
+- Pipeline runs backend tests first, then deploys to Hetzner VPS via SSH when tests pass.
 
 ## Container Health Checks
 
-The Docker Compose stack includes service-level health checks to improve startup reliability and runtime observability.
+The Docker Compose stack includes service-level health checks to improve startup reliability.
 
 - **Backend API:** Probes `GET /health` on port `3001`.
 - **Frontend UI:** Probes `GET /health` on port `3000`.
-- **Startup ordering:** Frontend waits for a healthy backend. The database runs outside Compose (Supabase), so readiness is enforced by `DATABASE_URL` and Prisma migrations at API startup.
+- **Grafana:** Probes `GET /api/health` on container port `3000` (published as host `3003`).
+- **Startup ordering:** Frontend waits for a healthy backend. Grafana depends on Prometheus.
+- **Database:** Runs outside Compose (Supabase); readiness is enforced by valid `DATABASE_URL` and Prisma migrations at API startup.
+
+## Runtime Stack (Current Stage)
+
+- **App services:** `backend`, `frontend`
+- **Monitoring services:** `prometheus`, `node-exporter`, `cadvisor`, `grafana`
+- **Database:** Supabase PostgreSQL (external, not containerized in this repo)
 
 ## License
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { AccessTokenModule } from "@/components/AccessTokenModule";
+import { HomePortfolioNoticeGate } from "@/components/home/HomePortfolioNoticeGate";
 import { BubbleBackground } from "@/components/ui/BubbleBackground";
 import { BRAND_NAME } from "@/lib/brand";
 import "./globals.css";
@@ -40,6 +41,7 @@ export default function RootLayout({
         <div className="relative z-10 flex min-h-full flex-1 flex-col">
           {children}
         </div>
+        <HomePortfolioNoticeGate />
       </body>
     </html>
   );

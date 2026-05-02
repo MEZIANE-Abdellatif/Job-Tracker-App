@@ -1,0 +1,10 @@
+# Reverse proxy for App Tracker (TLS via Caddy automatic HTTPS).
+# Point DNS A/AAAA for both hosts to this machine before starting compose.
+
+app.apptracker.live {
+	reverse_proxy frontend:3000
+}
+
+api.apptracker.live {
+	reverse_proxy backend:3001
+}

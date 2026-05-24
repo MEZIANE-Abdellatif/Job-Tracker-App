@@ -24,6 +24,8 @@ html {
 }
 
 body {
+  position: relative;
+  isolation: isolate;
   min-height: 100%;
   background: linear-gradient(
     168deg,
@@ -32,8 +34,135 @@ body {
     #cfe9ff 100%
   );
   background-attachment: fixed;
+  background-repeat: no-repeat;
   color: var(--foreground);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Layered sky — decorative clouds above the base gradient, below page content */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: -12vh -8vw;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Clouds 1 & 2 — upper sky, brighter puffs */
+body::before {
+  opacity: 0.88;
+  background-image:
+  /* cloud 1 — upper left */
+    radial-gradient(
+      ellipse 150px 72px at 14% 16%,
+      rgba(255, 255, 255, 0.78) 0%,
+      rgba(255, 255, 255, 0.28) 42%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 105px 54px at 20% 14%,
+      rgba(255, 255, 255, 0.68) 0%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 92px 48px at 8% 20%,
+      rgba(255, 255, 255, 0.58) 0%,
+      transparent 65%
+    ),
+  /* cloud 2 — upper right */
+    radial-gradient(
+      ellipse 175px 82px at 82% 22%,
+      rgba(255, 255, 255, 0.62) 0%,
+      rgba(255, 255, 255, 0.22) 45%,
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 120px 58px at 88% 19%,
+      rgba(255, 255, 255, 0.52) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 95px 46px at 76% 26%,
+      rgba(255, 255, 255, 0.46) 0%,
+      transparent 68%
+    );
+  filter: blur(0.75px);
+  animation: sky-cloud-drift-high 110s ease-in-out infinite alternate;
+}
+
+/* Clouds 3 & 4 — mid / lower sky, softer and larger */
+body::after {
+  opacity: 0.82;
+  background-image:
+  /* cloud 3 — mid canvas */
+    radial-gradient(
+      ellipse 190px 88px at 38% 48%,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0.18) 48%,
+      transparent 76%
+    ),
+    radial-gradient(
+      ellipse 135px 64px at 45% 45%,
+      rgba(255, 255, 255, 0.48) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 110px 52px at 30% 52%,
+      rgba(255, 255, 255, 0.4) 0%,
+      transparent 68%
+    ),
+  /* cloud 4 — lower horizon band */
+    radial-gradient(
+      ellipse 220px 96px at 22% 82%,
+      rgba(255, 255, 255, 0.42) 0%,
+      rgba(255, 255, 255, 0.12) 50%,
+      transparent 78%
+    ),
+    radial-gradient(
+      ellipse 180px 78px at 58% 86%,
+      rgba(255, 255, 255, 0.36) 0%,
+      transparent 75%
+    ),
+    radial-gradient(
+      ellipse 145px 66px at 68% 80%,
+      rgba(255, 255, 255, 0.32) 0%,
+      transparent 72%
+    ),
+  /* soft sun haze — keeps the palette warm without changing the gradient */
+    radial-gradient(
+      ellipse 48vmin 32vmin at 84% 10%,
+      rgba(255, 255, 255, 0.38) 0%,
+      rgba(255, 255, 255, 0.08) 42%,
+      transparent 68%
+    );
+  filter: blur(1.25px);
+  animation: sky-cloud-drift-low 85s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes sky-cloud-drift-high {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3.5vw, -0.6vh, 0) scale(1.015);
+  }
+  100% {
+    transform: translate3d(7vw, 0.4vh, 0) scale(1.03);
+  }
+}
+
+@keyframes sky-cloud-drift-low {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  45% {
+    transform: translate3d(-4vw, 0.8vh, 0) scale(1.02);
+  }
+  100% {
+    transform: translate3d(-7.5vw, -0.5vh, 0) scale(1.035);
+  }
 }
 
 /* Pointer affordance: links, buttons, and other primary click targets */
@@ -65,54 +194,9 @@ select:disabled,
   cursor: not-allowed;
 }
 
-/* Floating bubbles (see BubbleBackground.tsx) */
-.bubble-field .bubble {
-  background: radial-gradient(
-    circle at 32% 28%,
-    rgba(255, 255, 255, 0.88) 0%,
-    rgba(200, 235, 255, 0.42) 40%,
-    rgba(91, 184, 245, 0.22) 68%,
-    rgba(33, 150, 243, 0.1) 100%
-  );
-  box-shadow:
-    inset 0 0 12px rgba(255, 255, 255, 0.75),
-    0 0 22px rgba(91, 184, 245, 0.12);
-  animation-name: bubble-rise;
-  animation-duration: var(--bubble-duration, 40s);
-  animation-delay: var(--bubble-delay, 0s);
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-@keyframes bubble-rise {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-    opacity: 0;
-  }
-  7% {
-    opacity: var(--bubble-peak-opacity, 0.35);
-  }
-  48% {
-    transform: translate3d(var(--bubble-drift, 12px), -52vh, 0) scale(1.05);
-  }
-  93% {
-    opacity: var(--bubble-peak-opacity, 0.35);
-  }
-  100% {
-    transform: translate3d(
-        calc(var(--bubble-drift, 12px) * -0.55),
-        -118vh,
-        0
-      )
-      scale(0.9);
-    opacity: 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .bubble-field .bubble {
+  body::before,
+  body::after {
     animation: none;
-    opacity: 0.12;
-    transform: translate3d(0, -20vh, 0) scale(0.95);
   }
 }

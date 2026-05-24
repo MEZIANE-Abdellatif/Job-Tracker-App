@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import { AccessTokenModule } from "@/components/AccessTokenModule";
 import { HomePortfolioNoticeGate } from "@/components/home/HomePortfolioNoticeGate";
-import { BubbleBackground } from "@/components/ui/BubbleBackground";
 import { BRAND_NAME } from "@/lib/brand";
 import "./globals.css";
 
@@ -36,7 +35,6 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="relative flex min-h-full flex-col">
-        <BubbleBackground />
         <AccessTokenModule />
         <div className="relative z-10 flex min-h-full flex-1 flex-col">
           {children}

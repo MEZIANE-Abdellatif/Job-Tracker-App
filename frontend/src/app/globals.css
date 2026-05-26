@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --page-bg-top: #e8f4fd;
-  --page-bg-bottom: #dbeeff;
+  --page-bg-top: #93d5ff;
+  --page-bg-bottom: #eef9ff;
   --accent: #2196f3;
   --accent-bright: #5bb8f5;
   --foreground: #0c3d5c;
@@ -28,10 +28,11 @@ body {
   isolation: isolate;
   min-height: 100%;
   background: linear-gradient(
-    168deg,
-    var(--page-bg-top) 0%,
-    var(--page-bg-bottom) 48%,
-    #cfe9ff 100%
+    180deg,
+    #83cdfd 0%,
+    var(--page-bg-top) 24%,
+    #cdefff 58%,
+    var(--page-bg-bottom) 100%
   );
   background-attachment: fixed;
   background-repeat: no-repeat;
@@ -39,142 +40,133 @@ body {
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Layered sky: decorative clouds above the base gradient, below page content */
+/* Layered sky: clearer cloud silhouettes above the base gradient, below page content */
 body::before,
 body::after {
   content: "";
   position: fixed;
-  inset: -12vh -8vw;
+  inset: -14vh -10vw;
   z-index: 0;
   pointer-events: none;
   will-change: transform;
 }
 
-/* Clouds 1 and 2: clear upper-sky cloud silhouettes */
+/* Upper clouds: bright puffs with soft blue undersides */
 body::before {
-  opacity: 0.98;
+  opacity: 1;
   background-image:
-  /* cloud 1 blue underside */
     radial-gradient(
-      ellipse 260px 84px at 16% 23%,
-      rgba(91, 184, 245, 0.2) 0%,
-      rgba(91, 184, 245, 0.12) 42%,
+      ellipse 360px 112px at 17% 28%,
+      rgba(114, 184, 232, 0.34) 0%,
+      rgba(114, 184, 232, 0.18) 48%,
       transparent 72%
     ),
-  /* cloud 1 white puffs */
     radial-gradient(
-      ellipse 150px 68px at 10% 19%,
-      rgba(255, 255, 255, 0.92) 0%,
-      rgba(255, 255, 255, 0.78) 42%,
+      ellipse 210px 92px at 7% 23%,
+      rgba(255, 255, 255, 0.96) 0%,
+      rgba(255, 255, 255, 0.9) 46%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 280px 124px at 18% 19%,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.82) 50%,
       transparent 74%
     ),
     radial-gradient(
-      ellipse 205px 92px at 18% 16%,
+      ellipse 205px 86px at 31% 25%,
+      rgba(255, 255, 255, 0.94) 0%,
+      rgba(255, 255, 255, 0.74) 48%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 390px 118px at 77% 23%,
+      rgba(114, 184, 232, 0.3) 0%,
+      rgba(114, 184, 232, 0.16) 48%,
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 225px 96px at 67% 19%,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.78) 48%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 295px 132px at 80% 16%,
+      rgba(255, 255, 255, 0.96) 0%,
+      rgba(255, 255, 255, 0.78) 50%,
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 200px 86px at 93% 24%,
       rgba(255, 255, 255, 0.88) 0%,
       rgba(255, 255, 255, 0.64) 48%,
-      transparent 76%
-    ),
-    radial-gradient(
-      ellipse 132px 58px at 27% 21%,
-      rgba(255, 255, 255, 0.82) 0%,
-      rgba(255, 255, 255, 0.52) 48%,
-      transparent 72%
-    ),
-  /* cloud 2 blue underside */
-    radial-gradient(
-      ellipse 300px 94px at 78% 28%,
-      rgba(91, 184, 245, 0.18) 0%,
-      rgba(91, 184, 245, 0.1) 44%,
-      transparent 74%
-    ),
-  /* cloud 2 white puffs */
-    radial-gradient(
-      ellipse 180px 78px at 71% 24%,
-      rgba(255, 255, 255, 0.84) 0%,
-      rgba(255, 255, 255, 0.58) 48%,
-      transparent 76%
-    ),
-    radial-gradient(
-      ellipse 230px 104px at 82% 21%,
-      rgba(255, 255, 255, 0.86) 0%,
-      rgba(255, 255, 255, 0.6) 46%,
-      transparent 76%
-    ),
-    radial-gradient(
-      ellipse 140px 62px at 91% 27%,
-      rgba(255, 255, 255, 0.78) 0%,
-      rgba(255, 255, 255, 0.46) 48%,
       transparent 72%
     );
-  filter: blur(0.25px);
-  animation: sky-cloud-drift-high 105s ease-in-out infinite alternate;
+  filter: drop-shadow(0 18px 30px rgba(62, 151, 214, 0.16));
+  animation: sky-cloud-drift-high 115s ease-in-out infinite alternate;
 }
 
-/* Clouds 3 and 4: larger lower clouds plus a soft sun haze */
+/* Lower clouds: horizon puffs and a small sun haze */
 body::after {
-  opacity: 0.94;
+  opacity: 1;
   background-image:
-  /* cloud 3 blue underside */
     radial-gradient(
-      ellipse 320px 104px at 42% 54%,
-      rgba(91, 184, 245, 0.17) 0%,
-      rgba(91, 184, 245, 0.09) 48%,
+      ellipse 450px 138px at 44% 62%,
+      rgba(114, 184, 232, 0.28) 0%,
+      rgba(114, 184, 232, 0.13) 52%,
       transparent 76%
     ),
-  /* cloud 3 white puffs */
     radial-gradient(
-      ellipse 185px 82px at 33% 49%,
-      rgba(255, 255, 255, 0.78) 0%,
-      rgba(255, 255, 255, 0.48) 48%,
+      ellipse 245px 106px at 30% 57%,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.68) 50%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 330px 142px at 44% 53%,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.7) 50%,
       transparent 74%
     ),
     radial-gradient(
-      ellipse 245px 108px at 43% 46%,
+      ellipse 235px 100px at 60% 59%,
+      rgba(255, 255, 255, 0.84) 0%,
+      rgba(255, 255, 255, 0.58) 50%,
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 72vmax 18vmax at 50% 101%,
       rgba(255, 255, 255, 0.82) 0%,
-      rgba(255, 255, 255, 0.54) 46%,
+      rgba(255, 255, 255, 0.48) 45%,
       transparent 76%
     ),
     radial-gradient(
-      ellipse 150px 68px at 55% 51%,
-      rgba(255, 255, 255, 0.7) 0%,
-      rgba(255, 255, 255, 0.42) 50%,
+      ellipse 340px 126px at 17% 88%,
+      rgba(255, 255, 255, 0.76) 0%,
+      rgba(255, 255, 255, 0.42) 52%,
       transparent 74%
     ),
-  /* cloud 4 blue underside */
     radial-gradient(
-      ellipse 420px 128px at 42% 85%,
-      rgba(91, 184, 245, 0.16) 0%,
-      rgba(91, 184, 245, 0.08) 48%,
-      transparent 78%
-    ),
-  /* cloud 4 white horizon puffs */
-    radial-gradient(
-      ellipse 235px 94px at 20% 82%,
-      rgba(255, 255, 255, 0.64) 0%,
-      rgba(255, 255, 255, 0.34) 50%,
+      ellipse 410px 146px at 47% 91%,
+      rgba(255, 255, 255, 0.82) 0%,
+      rgba(255, 255, 255, 0.46) 52%,
       transparent 76%
     ),
     radial-gradient(
-      ellipse 300px 118px at 45% 84%,
-      rgba(255, 255, 255, 0.7) 0%,
-      rgba(255, 255, 255, 0.38) 50%,
-      transparent 78%
+      ellipse 360px 130px at 78% 88%,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.38) 52%,
+      transparent 74%
     ),
     radial-gradient(
-      ellipse 240px 96px at 70% 81%,
+      ellipse 42vmin 30vmin at 86% 9%,
       rgba(255, 255, 255, 0.58) 0%,
-      rgba(255, 255, 255, 0.3) 50%,
-      transparent 76%
-    ),
-  /* soft sun haze */
-    radial-gradient(
-      ellipse 48vmin 32vmin at 84% 10%,
-      rgba(255, 255, 255, 0.46) 0%,
-      rgba(255, 255, 255, 0.1) 42%,
+      rgba(255, 255, 255, 0.18) 44%,
       transparent 68%
     );
-  filter: blur(0.5px);
-  animation: sky-cloud-drift-low 85s ease-in-out infinite alternate-reverse;
+  filter: drop-shadow(0 20px 34px rgba(62, 151, 214, 0.14));
+  animation: sky-cloud-drift-low 95s ease-in-out infinite alternate-reverse;
 }
 
 @keyframes sky-cloud-drift-high {
